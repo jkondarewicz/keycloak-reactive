@@ -1,0 +1,34 @@
+version: "3.0"
+services:
+  keycloak-db:
+    container_name: keycloak-db
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: keycloak
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:15.0.2
+    platform: linux/amd64
+    ports:
+      - "8080:8080"
+      - "9990:9990"
+    environment:
+      DB_ADDR: keycloak-db
+      DB_PORT: 5432
+      DB_DATABASE: keycloak
+      DB_USER: admin
+      DB_PASSWORD: secret
+      DB_VENDOR: postgres
+      KEYCLOAK_USER: keycloak_admin
+      KEYCLOAK_PASSWORD: keycloak_secret
+
+      KC_DB: postgres
+      KC_DB_URL: "jdbc:postgresql://keycloak-db:5432/keycloak"
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: secret
+      KEYCLOAK_ADMIN: keycloak_admin
+      KEYCLOAK_ADMIN_PASSWORD: keycloak_secret
