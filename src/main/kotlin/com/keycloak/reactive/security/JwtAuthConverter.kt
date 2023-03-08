@@ -20,7 +20,7 @@ class JwtAuthConverter(
 
     override fun convert(jwt: Jwt): Mono<AbstractAuthenticationToken> {
         val authorities = jwtGrantedAuthoritiesConverter.getGrantAuthorities(jwt) + extractRoles(jwt)
-        return Mono.create { JwtAuthenticationToken(jwt, authorities, jwt.principalName) }
+        return Mono.just(JwtAuthenticationToken(jwt, authorities, jwt.principalName))
     }
 
     private val Jwt.principalName get(): String {

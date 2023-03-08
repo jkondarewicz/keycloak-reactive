@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.util.UUID
 
-@Document
+@Document(collection = "Pet")
 data class Pet(
     @Id
     val id: String = UUID.randomUUID().toString(),

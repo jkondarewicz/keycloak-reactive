@@ -14,11 +14,15 @@ import java.lang.Exception
 
 @Configuration
 @EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
 class WebSecurityConfig(
     private val jwtAuthConverter: JwtAuthConverter
 ) {
     @Bean
     fun securityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
+        http
+            .authorizeExchange()
+            .anyExchange().authenticated()
         http
             .csrf().disable()
             .oauth2ResourceServer()

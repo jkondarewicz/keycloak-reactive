@@ -12,7 +12,7 @@ class PetController(
     private val petService: PetService
 ) {
 
-//    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/pets/{id}")
     fun getPetById(@PathVariable id: String): Mono<PetDTO> {
         return petService.getPetById(id)
