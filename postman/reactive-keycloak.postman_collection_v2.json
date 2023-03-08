@@ -1,0 +1,90 @@
+{
+	"info": {
+		"_postman_id": "9ecab9ea-d006-47f1-97d1-a16483d502cd",
+		"name": "reactive-keycloak",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "keycloak learn login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const accessToken = pm.response.json().access_token",
+							"const refreshToken = pm.response.json().refresh_token",
+							"console.log(accessToken);",
+							"console.log(refreshToken);",
+							"pm.environment.set(\"ACCESS_TOKEN\", accessToken);",
+							"pm.environment.set(\"REFRESH_TOKEN\", refreshToken);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "spring-boot-client",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "jakub.kondarewicz@test.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "secret",
+							"type": "text"
+						}
+					]
+				},
+				"url": "http://localhost:8080/auth/realms/SpringBootKeycloak/protocol/openid-connect/token"
+			},
+			"response": []
+		},
+		{
+			"name": "keycloak learn verify user info",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{ACCESS_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:8080/auth/realms/SpringBootKeycloak/protocol/openid-connect/userinfo"
+			},
+			"response": []
+		},
+		{
+			"name": "get pet by id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{ACCESS_TOKEN}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": "http://localhost:8081/pets/2e74344e-2534-4b72-be33-d7bef5e055bb"
+			},
+			"response": []
+		}
+	]
+}

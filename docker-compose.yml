@@ -1,4 +1,4 @@
-version: "3.0"
+version: "3.7"
 services:
   keycloak-db:
     container_name: keycloak-db
@@ -9,13 +9,12 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: keycloak
+
   keycloak:
     container_name: keycloak
     image: quay.io/keycloak/keycloak:15.0.2
-    platform: linux/amd64
     ports:
       - "8080:8080"
-      - "9990:9990"
     environment:
       DB_ADDR: keycloak-db
       DB_PORT: 5432
@@ -25,10 +24,26 @@ services:
       DB_VENDOR: postgres
       KEYCLOAK_USER: keycloak_admin
       KEYCLOAK_PASSWORD: keycloak_secret
+      KEYCLOAK_IMPORT: /opt/exported_realm/realm.json
+    volumes:
+      - "./realm:/opt/exported_realm"
 
-      KC_DB: postgres
-      KC_DB_URL: "jdbc:postgresql://keycloak-db:5432/keycloak"
-      KC_DB_USERNAME: admin
-      KC_DB_PASSWORD: secret
-      KEYCLOAK_ADMIN: keycloak_admin
-      KEYCLOAK_ADMIN_PASSWORD: keycloak_secret
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./docker-entrypoint-initdb.d/db-init.js:/docker-entrypoint-initdb.d/db-init.js:ro
+
+  mongo-viewer:
+    container_name: mongo-viewer
+    image: mongo-express:latest
+    restart: unless-stopped
+    ports:
+      - "5000:8081"
+    environment:
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_SERVER: mongo
+    depends_on:
+      - mongo
