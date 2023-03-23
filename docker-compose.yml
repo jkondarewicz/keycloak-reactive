@@ -1,5 +1,14 @@
 version: "3.7"
 services:
+  openldap:
+    container_name: ldap
+    image: bitnami/openldap:latest
+    environment:
+      LDAP_CONFIG_ADMIN_ENABLED: "yes"
+    ports:
+      - '1389:1389'
+      - '1636:1636'
+
   keycloak-db:
     container_name: keycloak-db
     image: postgres:latest
@@ -12,24 +21,25 @@ services:
 
   keycloak:
     container_name: keycloak
-    image: quay.io/keycloak/keycloak:15.0.2
+    build:
+      context: .
+      dockerfile: docker.build/keycloak.Dockerfile
     ports:
       - "8080:8080"
     environment:
-      DB_ADDR: keycloak-db
-      DB_PORT: 5432
-      DB_DATABASE: keycloak
-      DB_USER: admin
-      DB_PASSWORD: secret
-      DB_VENDOR: postgres
-      KEYCLOAK_USER: keycloak_admin
-      KEYCLOAK_PASSWORD: keycloak_secret
-      KEYCLOAK_IMPORT: /opt/exported_realm/realm.json
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: secret
+      KEYCLOAK_ADMIN: keycloak_admin
+      KEYCLOAK_ADMIN_PASSWORD: keycloak_secret
     volumes:
-      - "./realm:/opt/exported_realm"
+      - "./realm/realm.json:/opt/keycloak/data/import/realm.json"
+    depends_on:
+      - keycloak-db
 
-  mongo:
-    container_name: mongo
+  pets-db:
+    container_name: pets-db
     image: mongo:latest
     ports:
       - "27017:27017"
@@ -41,9 +51,20 @@ services:
     image: mongo-express:latest
     restart: unless-stopped
     ports:
-      - "5000:8081"
+      - "5002:8081"
     environment:
       ME_CONFIG_MONGODB_PORT: 27017
-      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_SERVER: pets-db
     depends_on:
-      - mongo
+      - pets-db
+
+  openldap-ui:
+    container_name: ldap-ui
+    image: dnknth/ldap-ui
+    environment:
+      LDAP_URL: "ldap://openldap:1389"
+      BASE_DN: dc=example,dc=org
+    ports:
+      - "5001:5000"
+    depends_on:
+      - openldap

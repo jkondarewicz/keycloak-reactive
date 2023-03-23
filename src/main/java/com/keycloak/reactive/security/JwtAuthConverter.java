@@ -32,13 +32,10 @@ class JwtAuthConverter implements Converter<Jwt, Mono<AbstractAuthenticationToke
     }
 
     private String getPrincipalName(Jwt jwt) {
-        return Optional
-                .ofNullable(
-                        jwt.getClaimAsString(jwtProps.getPrincipalAttribute())
-                )
-                .orElse(
-                        jwt.getClaimAsString(JwtClaimNames.SUB)
-                );
+        var key = Optional
+                .ofNullable(jwtProps.getPrincipalAttribute())
+                .orElse(JwtClaimNames.SUB);
+        return jwt.getClaimAsString(key);
     }
 
     private Set<GrantedAuthority> getGrantAuthorities(Jwt jwt) {
@@ -49,7 +46,7 @@ class JwtAuthConverter implements Converter<Jwt, Mono<AbstractAuthenticationToke
 
     private Set<GrantedAuthority> extractRoles(Jwt jwt) {
         var resourceAccess = jwt.<Map<String, Object>>getClaim(RESOURCE_ACCESS);
-        Map<String, Object> resources = new HashMap<String, Object>();
+        Map<String, Object> resources = new HashMap<>();
         try {
             resources = (Map<String, Object>) resourceAccess.get(jwtProps.getResourceId());
         } catch(Exception e) {}

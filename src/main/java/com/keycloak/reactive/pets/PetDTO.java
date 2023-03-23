@@ -1,8 +1,5 @@
 package com.keycloak.reactive.pets;
 
-import org.springframework.data.annotation.Id;
-import java.util.*;
-
 public record PetDTO(
     String id,
     String name,

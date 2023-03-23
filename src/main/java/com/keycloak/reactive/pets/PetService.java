@@ -16,7 +16,6 @@ public class PetService{
             .findById(id)
             .switchIfEmpty(Mono.error(new Exception("Pet not found")))
             .flatMap(pet -> Mono.just(PetDTO.fromPet(pet)));
-
     }
 
 }
