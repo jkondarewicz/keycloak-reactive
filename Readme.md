@@ -12,8 +12,9 @@
 
 1. Root application url: [keycloak reactive app](http://localhost:8081)
 2. Keycloak application url: [keycloak app](http://localhost:8080)
-3. Database view url: [view database](http://localhost:5000)
+3. Database view url: [view database](http://localhost:5002)
 4. Database url: [database](http://localhost:27017)
+5. Ldap view url: [ldap](http://localhost:5001)
 
 # Development secrets
 
@@ -33,4 +34,13 @@
    password: secret
    ```
 3. Database has no secrets
+4. Ldap users
+   ```
+   User 1
+   user:     user01
+   password: bitnami1
    
+   User 2
+   user:     user02
+   password: bitnami2
+   ```
